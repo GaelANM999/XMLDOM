@@ -37,7 +37,7 @@ public class Sales {
             Document doc = db.parse(new File(argv[0]));
 
             doc.getDocumentElement().normalize();
-
+            //se aplica el metodo para aumentar el porcentaje y guardar el xml
             incremento(doc);
             saveDocument(doc, "new_sales.xml");
 
@@ -54,22 +54,25 @@ public class Sales {
 
 
     }
+    //Empieza el metodo para aumentar el porcentaje a las ventas
     public  static void incremento(Document doc){
         Element root = doc.getDocumentElement();
 
-       // int n = salesData.getLength();
-
+       
+        //el usuario ingresa el porcentaje que quiere que aumenten las ventas
         double cuanto = Integer.parseInt(JOptionPane.showInputDialog(null, "Escribe un porcentaje entre 5% y 15%" +
                 " para incrementar el valor de las ventas: "));
-
+        //valida que sea un valor entre 5 y 15
         if (cuanto < 5 || cuanto> 15){
             JOptionPane.showMessageDialog(null,"Introduce un valor válido");
         }else {
+            //el usuario ingresa a cual departamento hacerle los cambios
             String cual = JOptionPane.showInputDialog(null, "Escribe el departamento al " +
                     "que se le harán los cambios: ");
             String department;
             String sales;
 
+            //toma el nodo para ver los elementos de este
             NodeList salesData = root.getElementsByTagName("sale_record");
 
             for (int i = 0; i < salesData.getLength(); i++) {
@@ -78,20 +81,25 @@ public class Sales {
 
                     Element element = (Element) node;
 
-
+                        //toma los atributos de los elementos que le decimos
                     department = element.getElementsByTagName("department").item(0).getTextContent();
                     sales = element.getElementsByTagName("sales").item(0).getTextContent();
-
+                    
+                    //toma el valor que se ingresó y lo convierte para usarlo en operaciones
                     double porcentaje= cuanto * 0.01;
 
 
 
-
+                            //verifica que el departamento ingresado exista
                         if (department.equals(cual)) {
+                            //toma lo que hay en sales del departamento especificado
                             sales = element.getElementsByTagName("sales").item(0).getTextContent();
+
+                            //hace los calculos necesarios para sacar el porcentaje de cada venta y aumentarselo
                             Double salesD = Double.parseDouble(sales);
                             double salesPor = salesD * porcentaje;
                             double salesFinal = salesD + salesPor;
+                            //escribe los sales nuevos en el documento
                             element.getElementsByTagName("sales").item(0).setTextContent(String.valueOf(salesFinal));
                             System.out.println("Ventas de " + cual + " " + (i + 1) + " " + salesFinal);
 
@@ -104,7 +112,7 @@ public class Sales {
         }
 
 
-
+//sobreescribe el xml con los cambios de sales
 
     public static void saveDocument(Document doc, String fileName) {
 
